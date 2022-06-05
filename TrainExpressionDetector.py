@@ -1,7 +1,7 @@
 import cv2
 import matplotlib.pyplot as plt
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Dropout, Dense, Flatten
+from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
 from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -9,8 +9,8 @@ train_data_gen = ImageDataGenerator(
         rescale=1./255,
         horizontal_flip=True,
         width_shift_range=0.1,
-        height_shift_range=0.1,
-)
+        height_shift_range=0.1)
+
 validation_data_gen = ImageDataGenerator(rescale=1./255)
 
 train_generator = train_data_gen.flow_from_directory(
@@ -50,7 +50,7 @@ cv2.ocl.setUseOpenCL(False)
 
 expression_model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=0.0001, decay=1e-6), metrics=['accuracy'])
 
-history = expression_model.fit(train_generator, epochs=30, validation_data=validation_generator)
+history = expression_model.fit(train_generator, epochs=50, validation_data=validation_generator)
 
 fig , ax = plt.subplots(1,2)
 train_acc = history.history['accuracy']
@@ -72,12 +72,6 @@ ax[1].set_xlabel('Epoch')
 ax[1].legend(['Train', 'Validation'], loc='upper left')
 
 plt.show()
-# expression_model_info = expression_model.fit_generator(
-#         train_generator,
-#         steps_per_epoch=2100//60,
-#         epochs=30,
-#         validation_data=validation_generator,
-#         validation_steps=630//15)
 
 model_json = expression_model.to_json()
 with open("expression_model.json", "w") as json_file:
